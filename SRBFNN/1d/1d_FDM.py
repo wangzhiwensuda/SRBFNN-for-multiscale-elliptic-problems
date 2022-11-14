@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import math
 
-def exam1_fdm(h,eps):
+def exam1_FDM(h,eps):
     x = np.linspace(0,1,int(1/h+1))[1:-1]
     A = math.pi*np.cos(2*math.pi*x/eps)/(h*eps)
     B = (2+np.sin(2*math.pi*x/eps))/h**2
@@ -17,7 +17,7 @@ def exam1_fdm(h,eps):
     u[1:-1] = u1.flatten()+1
     # np.save('1d_FDM/1d_q1_%.3f.npy'%eps,u)
 
-def exam2_fdm(h,eps):
+def exam2_FDM(h,eps):
     x = np.linspace(0, 1, int(1 / h + 1))[1:-1]
     A = (2*math.pi/eps)*np.cos(2*math.pi*x/eps)*np.cos(2*math.pi*x)-2*math.pi*np.sin(2*math.pi*x/eps)*np.sin(2*math.pi*x)
     B = 2+np.sin(2*math.pi*x/eps)*np.cos(2*math.pi*x)
@@ -32,7 +32,7 @@ def exam2_fdm(h,eps):
     u[1:-1] = u1.flatten() + 1
     # np.save('1d_FDM/1d_q2_%.3f.npy' % eps, u)
     
-def exam3_fdm(h,eps):
+def exam3_FDM(h,eps):
     x = np.linspace(0, 1, int(1 / h + 1))[1:-1]
     A = np.cos(2*math.pi*x+2*math.pi*x/eps)*(2*math.pi+2*math.pi/eps)
     B = 2+np.sin(2*math.pi*x/eps+2*math.pi*x)
@@ -48,7 +48,7 @@ def exam3_fdm(h,eps):
     # np.save('1d_FDM/1d_q3_%.3f.npy' % eps, u)
     
     
-def exam4_fdm(h,eps):
+def exam4_FDM(h,eps):
     x = np.linspace(0, 1, int(1 / h + 1))[1:-1]
     xc = np.arange(0.5 * h,1,h)
     xx = np.mod(xc, eps)
@@ -68,7 +68,7 @@ if __name__ == '__main__':
     h = 0.0001
     eps_all = [0.5,0.1,0.05,0.01,0.005,0.002]
     for eps in eps_all:
-        exam1_fdm(h, eps)
-        exam2_fdm(h, eps)
-        exam3_fdm(h, eps)
-        exam4_fdm(h, eps)
+        exam1_FDM(h, eps)
+        exam2_FDM(h, eps)
+        exam3_FDM(h, eps)
+        exam4_FDM(h, eps)
