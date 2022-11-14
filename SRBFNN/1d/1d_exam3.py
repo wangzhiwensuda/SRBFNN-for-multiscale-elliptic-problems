@@ -62,7 +62,7 @@ def get_u(x, c, h, w):
     output = torch.matmul(h,m.squeeze(-1))
     return output.flatten()
 
-#The explicit expression of RBFNN's derivatives:
+#The RBFNN's derivative about x:
 def get_ux(x, c, h, w):
     c1 = (x.view(-1, 1) - c.view(-1,1,1)) 
     d2 = (w** 2).view(-1,1,1) 
@@ -146,11 +146,11 @@ def show_rec_err(eps):
         plt.ylabel('the number of RBF', fontsize=16)
         plt.show()
 
-
+#show the SRBFNN solution and FDM solution
 def show_u(net,eps):
     net = net.cpu()
     x = np.linspace(0, 1, 10001)
-    plt.rcParams['axes.unicode_minus'] = False  # 正常显示符号
+    plt.rcParams['axes.unicode_minus'] = False  
     plt.grid(linestyle="--")
     with torch.no_grad():
         u_SRBF = get_u(torch.Tensor(x), net.center, net.hight, net.width).numpy()
@@ -169,7 +169,7 @@ def show_u(net,eps):
 
 
 
-# 定义训练函数
+# The training process of SRBFNN
 def train(net,data_iter,eps,device,MaxNiter,SparseNiter,lr,tol1,tol2,Check_iter,lam1,lam2,lam3):
     print('Training on %s' % device)
     optimizer = optims.Adam(net.parameters(), lr)
@@ -247,7 +247,7 @@ def train(net,data_iter,eps,device,MaxNiter,SparseNiter,lr,tol1,tol2,Check_iter,
             np.savez('output/exam3/err_rec_%.3f.npz'%eps, H1=err_H1_rec, L2=err_L2_rec, L_inf=err_Li_rec, Niter_rec=Niter_rec,N=N_rec)
             net = net.to(device)
 
-
+#load the trained model
 def load_pth(net,eps):
     if os.path.exists('model/exam3/1d_exam3_%.3f.pth' % (eps)):
         print('load the trained model')
@@ -305,7 +305,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     main(args)
 
-"""         基函数个数        相对L2误差              相对H1误差             相对L_inf误差
+"""         N        
 eps=0.5      18               Rel. L2: 4.850224846566731e-05 Rel. L_inf: 0.00013362874377098374 Rel. H1: 0.00023194213918413339
 eps=0.1      40              Rel. L2: 6.538691229142245e-05 Rel. L_inf: 0.0003710219563879583 Rel. H1: 0.0005729939040108125
 eps=0.05     69             Rel. L2: 6.778403149322989e-05 Rel. L_inf: 0.0004673922126429349 Rel. H1: 0.0004249418543515476

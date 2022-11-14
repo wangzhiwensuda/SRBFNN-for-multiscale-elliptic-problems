@@ -63,7 +63,7 @@ def get_u(x, c, h, w):
     output = torch.matmul(h,m.squeeze(-1))
     return output.flatten()
 
-#The explicit expression of RBFNN's derivatives:
+#The  RBFNN's derivative about x:
 def get_ux(x, c, h, w):
     c1 = (x.view(-1, 1) - c.view(-1,1,1)) 
     d2 = (w** 2).view(-1,1,1) 
@@ -145,7 +145,7 @@ def show_err(net,eps):
 
 
 
-# 定义训练函数
+#the training process of SRBFNN
 def train(net,data_iter,eps,device,MaxNiter,SparseNiter,lr,tol1,tol2,Check_iter,lam1,lam2,lam3):
     print('Training on %s' % device)
     net = net.to(device=device)
@@ -204,7 +204,7 @@ def train(net,data_iter,eps,device,MaxNiter,SparseNiter,lr,tol1,tol2,Check_iter,
             print('The learning rate:{} '.format(optimizer.param_groups[0]['lr']))
             net = net.to(device)
 
-
+#load the trained model
 def load_pth(net,eps):
     if os.path.exists('model/exam4/1d_exam4_%.3f.pth' % (eps)):
         print('load the trained model')
@@ -261,7 +261,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     main(args)
 
-"""         基函数个数        相对L2误差              相对H1误差             相对L_inf误差
+"""         N        
 eps=0.5      34               Rel. L2: 0.00036732741299399596 Rel. L_inf: 0.0022062923506319435 Rel. H1: 0.006391129650362034
 eps=0.1      73              Rel. L2: 0.00013424734432226925 Rel. L_inf: 0.0006998394415351794 Rel. H1: 0.005174729763864248
 eps=0.05     168             Rel. L2: 0.00011849286150182928 Rel. L_inf: 0.0003839075016737264 Rel. H1: 0.007460649811525389

@@ -63,7 +63,7 @@ def get_u(x, c, h, w):
     output = torch.matmul(h,m.squeeze(-1))
     return output.flatten()
 
-#The explicit expression of RBFNN's derivatives:
+#The RBFNN's derivative about x:
 def get_ux(x, c, h, w):
     c1 = (x.view(-1, 1) - c.view(-1,1,1)) 
     d2 = (w** 2).view(-1,1,1) 
@@ -121,11 +121,11 @@ class SRBF(nn.Module):
         px = get_ux(x, self.center2, self.hight2, self.width2)
         return ux,p, px 
 
-
+#show the SRBFNN solution and the FDM solution
 def show_err(net,eps):
     net = net.cpu()
     x = np.linspace(0, 1, 10001)
-    plt.rcParams['axes.unicode_minus'] = False  # 正常显示符号
+    plt.rcParams['axes.unicode_minus'] = False  
     plt.grid(linestyle="--")
     with torch.no_grad():
         u_SRBF = get_u(torch.Tensor(x), net.center, net.hight, net.width).numpy()
@@ -144,7 +144,7 @@ def show_err(net,eps):
 
 
 
-# 定义训练函数
+#the training process of SRBFNN
 def train(net,data_iter,eps,device,MaxNiter,SparseNiter,lr,tol1,tol2,Check_iter,lam1,lam2,lam3):
     print('Training on %s' % device)
     net = net.to(device=device)
@@ -203,7 +203,7 @@ def train(net,data_iter,eps,device,MaxNiter,SparseNiter,lr,tol1,tol2,Check_iter,
             print('The learning rate:{} '.format(optimizer.param_groups[0]['lr']))
             net = net.to(device)
 
-
+#load the trained model
 def load_pth(net,eps):
     if os.path.exists('model/exam1/1d_exam1_%.3f.pth' % (eps)):
         print('load the trained model')
@@ -260,7 +260,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     main(args)
 
-"""         基函数个数        相对L2误差              相对H1误差             相对L_inf误差
+"""         N        
 eps=0.5      17               Rel. L2: 3.100091946354364e-05 Rel. L_inf: 8.552424358788451e-05 Rel. H1: 0.0001986455220698837   
 eps=0.1      38              Rel. L2: 6.718142144073114e-05 Rel. L_inf: 0.0002348345099692035 Rel. H1: 0.0008559916520817125
 eps=0.05     66             Rel. L2: 8.311182670421178e-05 Rel. L_inf: 0.0003291089057338414 Rel. H1: 0.0007847075199158606
