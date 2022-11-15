@@ -147,13 +147,15 @@ def show_rec_err(eps):
         plt.show()
 
 #show the SRBFNN solution and FDM solution
-def show_u(net,eps):
+def show_solution(net,eps):
     net = net.cpu()
-    x = np.linspace(0, 1, 10001)
+    x = torch.linspace(0, 1, 10001)
+    a = 2 + torch.sin(2 * math.pi * x + 2 * math.pi * x / eps)
     plt.rcParams['axes.unicode_minus'] = False  
     plt.grid(linestyle="--")
     with torch.no_grad():
-        u_SRBF = get_u(torch.Tensor(x), net.center, net.hight, net.width).numpy()
+        u_SRBF = get_u(x, net.center, net.hight, net.width).numpy()
+        ux_SRBF = (get_u(x, net.center2, net.hight2, net.width2)/a).numpy()
     u_FDM,ux_FDM = generate_FDM(eps)
     plt.plot(x,u_SRBF)
     plt.plot(x,u_FDM)
@@ -164,6 +166,12 @@ def show_u(net,eps):
     plt.plot(x,abs(u_SRBF-u_FDM),lw=0.6)
     plt.xlabel('x',fontsize=16)
     plt.ylabel('The absolute error',fontsize=16)
+    plt.show()
+    plt.plot(x,ux_SRBF)
+    plt.plot(x,ux_FDM)
+    plt.xlabel('x')
+    plt.ylabel(r'$u_x$')
+    plt.legend(['SRBFNN','FDM'])
     plt.show()
 
 
@@ -280,10 +288,10 @@ def main(args):
         net = load_pth(net,eps)
     #train(net,data_iter,eps,device,MaxNiter,SparseNiter,lr,tol1,tol2,Check_iter,lam1,lam2,lam3)
     print('The number of RBFs in final solution: ',net.hight.shape[0])
-    L2,L_inf,H1 = get_err(net,eps)
-    print('Rel. L2:', L2,'Rel. L_inf:', L_inf,'Rel. H1:', H1)
-    show_u(net,eps)
-    show_rec_err(eps)
+    #L2,L_inf,H1 = get_err(net,eps)
+    #print('Rel. L2:', L2,'Rel. L_inf:', L_inf,'Rel. H1:', H1)
+    show_solution(net,eps)
+    #show_rec_err(eps)
    
 
 if __name__ == "__main__":
