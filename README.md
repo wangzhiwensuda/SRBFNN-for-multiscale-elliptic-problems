@@ -29,11 +29,14 @@ cd SRBFNN/1d/
 python 1d_FDM.py
 ```
 <h4>3.2 estimating the slope using least squares method</h4>
+
 ```bash
 cd SRBFNN/1d/
 python tool.py
 ```
+
 <h4>3.3 running the examples</h4>
+
 ```bash
 cd SRBFNN/1d/
 python 1d_example.py --eps=0.5 --N=100 
