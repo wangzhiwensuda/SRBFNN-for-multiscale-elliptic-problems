@@ -213,7 +213,7 @@ def train(net,data_iter,batch_size_bd,eps,device,MaxNiter,SparseNiter,lr,tol1,to
         t2 = time.time()
         t_all += t2-t1
         l_sums = l_P_sum +l_Q_sum+ l_f_sum+l_bd_sum
-        if (Niter%30==0)&(optimizer.param_groups[0]['lr']>0.0001):
+        if (Niter%40==0)&(optimizer.param_groups[0]['lr']>0.0001):
             optimizer.param_groups[0]['lr']=0.1*optimizer.param_groups[0]['lr']
         print('eps=%.3f,t_all=%.3f,t_Niter=%.3f,thres=%.4f,Niter:%d,l_P:%f,l_Q:%f,l_f:%f,l_bd:%f,l_all:%f' 
             % (eps,t_all,t2-t1, thres, Niter, l_P_sum,l_Q_sum, l_f_sum,l_bd_sum, l_sums))
@@ -350,20 +350,20 @@ def main(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser() 
-    parser.add_argument('--eps', type=float, default=0.2) #[0.5,0.2,0.1,0.05,0.02,0.01]
+    parser.add_argument('--eps', type=float, default=0.01) #[0.5,0.2,0.1,0.05,0.02,0.01]
     parser.add_argument('--N', type=int, default=30000) #[1000,1000,2000,5000,15000,30000]
     parser.add_argument('--pretrained', type=str, default=True)
     parser.add_argument('--batch_size',type=int, default=1024)
     parser.add_argument('--batch_size_bd',type=int, default=512)
     parser.add_argument('--lr', type=float, default=0.1)
     parser.add_argument('--h', type=float, default=0.002)
-    parser.add_argument('--MaxNiter', type=int, default=3000)
-    parser.add_argument('--SparseNiter', type=int, default=2000)
+    parser.add_argument('--MaxNiter', type=int, default=300)
+    parser.add_argument('--SparseNiter', type=int, default=250)
     parser.add_argument('--Check_iter', type=int, default=10)
     parser.add_argument('--lam1', type=float, default=0.004)
     parser.add_argument('--lam2', type=float, default=20.0)
     parser.add_argument('--lam3', type=float, default=0.001)
-    parser.add_argument('--tol1', type=float, default=0.001)
+    parser.add_argument('--tol1', type=float, default=0.1)
     parser.add_argument('--tol2', type=float, default=0.00001)
     args = parser.parse_args()
     main(args)
