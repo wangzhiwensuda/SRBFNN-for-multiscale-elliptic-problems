@@ -17,7 +17,7 @@ torch.manual_seed(1)
 
 # generate training data
 def dataloader(num_points, batch_size, eps):
-    x = torch.rand(num_points)
+    x = torch.linspace(0,1,num_points)
     a = 2 + torch.sin(2 * math.pi * x + 2 * math.pi * x / eps)
     dataset = Data.TensorDataset(x, a)
     data_iter = Data.DataLoader(dataset=dataset, batch_size=batch_size, shuffle=True)
@@ -105,6 +105,7 @@ class SRBF(nn.Module):
     """
     def __init__(self, N, eps):
         super(SRBF, self).__init__()
+        torch.manual_seed(1)
         self.hight = nn.Parameter(torch.rand(N))  
         self.center = nn.Parameter(torch.rand(N, 1))
         self.width = nn.Parameter(torch.rand(N, 1) * (5 / eps))
@@ -217,12 +218,13 @@ def train(net,data_iter,eps,device,MaxNiter,SparseNiter,lr,tol1,tol2,Check_iter,
         t2 = time.time()
         t_all += t2-t1
         l_sums = l_p_sum + l_f_sum+l_bd_sum
-        if (Niter%300==0)&(optimizer.param_groups[0]['lr']>0.0001):
+        if (Niter%300==0)&(optimizer.param_groups[0]['lr']>0.001):
             optimizer.param_groups[0]['lr']=0.1*optimizer.param_groups[0]['lr']
         print('eps=%.3f,t_all=%.3f,t_Niter=%.3f,thres=%.4f,Niter:%d,l_p:%f,l_f:%f,l_bd:%f,l_all:%f' 
             % (eps,t_all,t2-t1, thres, Niter, l_p_sum, l_f_sum,l_bd_sum, l_sums))
         if Niter == SparseNiter: 
             thres = 0.0
+            optimizer.param_groups[0]['lr']=0.1*optimizer.param_groups[0]['lr']
         if (Niter % Check_iter == 0):
             L_rec.append(l_sums)
             if thres>0.0:
