@@ -213,7 +213,7 @@ def train(net,data_iter,batch_size_bd,eps,device,MaxNiter,SparseNiter,lr,tol1,to
         t2 = time.time()
         t_all += t2-t1
         l_sums = l_P_sum +l_Q_sum+ l_f_sum+l_bd_sum
-        if (Niter%40==0)&(optimizer.param_groups[0]['lr']>0.0001):
+        if (Niter%30==0)&(optimizer.param_groups[0]['lr']>0.0001):
             optimizer.param_groups[0]['lr']=0.1*optimizer.param_groups[0]['lr']
         print('eps=%.3f,t_all=%.3f,t_Niter=%.3f,thres=%.4f,Niter:%d,l_P:%f,l_Q:%f,l_f:%f,l_bd:%f,l_all:%f' 
             % (eps,t_all,t2-t1, thres, Niter, l_P_sum,l_Q_sum, l_f_sum,l_bd_sum, l_sums))
