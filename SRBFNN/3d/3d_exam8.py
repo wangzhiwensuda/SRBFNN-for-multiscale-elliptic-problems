@@ -108,40 +108,39 @@ def get_uz(X, c, h, w):  # X:m*2,,c:n*2,,h:n,,w:n
 
 
 #calculate the boundary loss
-def get_bound_loss(net, device, batch_size_bd=200):  
+def get_bound_loss(net, device, batch_size_bd=200):
     coords = torch.linspace(0, 1, batch_size_bd).to(device)
     
     y1, z1 = torch.meshgrid(coords, coords, indexing='ij')
     x1 = torch.zeros_like(y1)
-    X_0 = torch.stack((x1.flatten(), y1.flatten(), z1.flatten()), dim=1)
+    X_0 = torch.cat((x1.reshape(-1,1), y1.reshape(-1,1), z1.reshape(-1,1)), dim=1)
     
     x2 = torch.ones_like(y1)
-    X_1 = torch.stack((x2.flatten(), y1.flatten(), z1.flatten()), dim=1)
+    X_1 = torch.cat((x2.reshape(-1,1), y1.reshape(-1,1), z1.reshape(-1,1)), dim=1)
     
     x3, z3 = torch.meshgrid(coords, coords, indexing='ij')
     y3 = torch.zeros_like(x3)
-    Y_0 = torch.stack((x3.flatten(), y3.flatten(), z3.flatten()), dim=1)
+    Y_0 = torch.cat((x3.reshape(-1,1), y3.reshape(-1,1), z3.reshape(-1,1)), dim=1)
     
     y4 = torch.ones_like(x3)
-    Y_1 = torch.stack((x3.flatten(), y4.flatten(), z3.flatten()), dim=1)
+    Y_1 = torch.cat((x3.reshape(-1,1), y4.reshape(-1,1), z3.reshape(-1,1)), dim=1)
     
     x5, y5 = torch.meshgrid(coords, coords, indexing='ij')
     z5 = torch.zeros_like(x5)
-    Z_0 = torch.stack((x5.flatten(), y5.flatten(), z5.flatten()), dim=1)
+    Z_0 = torch.cat((x5.reshape(-1,1), y5.reshape(-1,1), z5.reshape(-1,1)), dim=1)
     
     z6 = torch.ones_like(x5)
-    Z_1 = torch.stack((x5.flatten(), y5.flatten(), z6.flatten()), dim=1)
+    Z_1 = torch.cat((x5.reshape(-1,1), y5.reshape(-1,1), z6.reshape(-1,1)), dim=1)
     
     c, h, w = net.center, net.hight, net.width
-    bound_loss = ((get_u(X_0, c, h, w) ** 2).mean()  # x=0
-    bound_loss += ((get_u(X_1, c, h, w) ** 2).mean() # x=1
-    bound_loss += ((get_u(Y_0, c, h, w) ** 2).mean() # y=0
-    bound_loss += ((get_u(Y_1, c, h, w) ** 2).mean() # y=1
-    bound_loss += ((get_u(Z_0, c, h, w) ** 2).mean() # z=0
-    bound_loss += ((get_u(Z_1, c, h, w) ** 2).mean() # z=1
+    bound_loss = ((get_u(X_0, c, h, w) ** 2).mean()
+    bound_loss += ((get_u(X_1, c, h, w) ** 2).mean()
+    bound_loss += ((get_u(Y_0, c, h, w) ** 2).mean()
+    bound_loss += ((get_u(Y_1, c, h, w) ** 2).mean()
+    bound_loss += ((get_u(Z_0, c, h, w) ** 2).mean()
+    bound_loss += ((get_u(Z_1, c, h, w) ** 2).mean()
     
     return bound_loss
-
 
 # SRBFNN for 3d
 class SRBF3d(nn.Module):
