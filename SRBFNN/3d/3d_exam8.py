@@ -108,33 +108,38 @@ def get_uz(X, c, h, w):  # X:m*2,,c:n*2,,h:n,,w:n
 
 
 #calculate the boundary loss
-def get_bound_loss(net,device, batch_size_bd=512):  
-    x = torch.linspace(0, 1, batch_size_bd).to(device)
-    y = torch.zeros_like(x).to(device)
-    z = torch.ones_like(x).to(device)
+def get_bound_loss(net, device, batch_size_bd=200):  
+    coords = torch.linspace(0, 1, batch_size_bd).to(device)
     
-    X_1 = torch.cat((x.view(-1, 1), y.view(-1, 1),y.view(-1, 1)), dim=1)  # (x,0,0)
-    X_2 = torch.cat((x.view(-1, 1), y.view(-1, 1),z.view(-1, 1)), dim=1)  #(x,0,1)
-    X_3 = torch.cat((x.view(-1, 1), z.view(-1, 1),y.view(-1, 1)), dim=1)  # (x,1,0)
-    X_4 = torch.cat((x.view(-1, 1), z.view(-1, 1),z.view(-1, 1)), dim=1)  #(x,1,1)
+    y1, z1 = torch.meshgrid(coords, coords, indexing='ij')
+    x1 = torch.zeros_like(y1)
+    X_0 = torch.stack((x1.flatten(), y1.flatten(), z1.flatten()), dim=1)
     
-    Y_1 = torch.cat((y.view(-1, 1), x.view(-1, 1), y.view(-1, 1)), dim=1)  # (0,y,0)
-    Y_2 = torch.cat((y.view(-1, 1), x.view(-1, 1), z.view(-1, 1)), dim=1)  # (0,y,1)
-    Y_3 = torch.cat((z.view(-1, 1), x.view(-1, 1), y.view(-1, 1)), dim=1)  # (1,y,0)
-    Y_4 = torch.cat((z.view(-1, 1), x.view(-1, 1), z.view(-1, 1)), dim=1)  # (1,y,1)
+    x2 = torch.ones_like(y1)
+    X_1 = torch.stack((x2.flatten(), y1.flatten(), z1.flatten()), dim=1)
     
-    Z_1 = torch.cat((y.view(-1, 1), z.view(-1, 1), x.view(-1, 1)), dim=1)  # (0,1,z)
-    Z_2 = torch.cat((y.view(-1, 1), y.view(-1, 1), x.view(-1, 1)), dim=1)  # (0,0,z)
-    Z_3 = torch.cat((z.view(-1, 1), y.view(-1, 1), x.view(-1, 1)), dim=1)  # (1,0,z)
-    Z_4 = torch.cat((z.view(-1, 1), z.view(-1, 1), x.view(-1, 1)), dim=1)  # (1,1,z)
+    x3, z3 = torch.meshgrid(coords, coords, indexing='ij')
+    y3 = torch.zeros_like(x3)
+    Y_0 = torch.stack((x3.flatten(), y3.flatten(), z3.flatten()), dim=1)
     
-    c,h,w = net.center,net.hight,net.width
-    bound_loss = ((get_u(X_1, c, h, w) - 0) ** 2).mean() + ((get_u(X_2, c, h, w) - 0) ** 2).mean() + \
-                 ((get_u(X_3, c, h, w) - 0) ** 2).mean() + ((get_u(X_4, c, h, w) - 0) ** 2).mean()+ \
-                 ((get_u(Y_1, c, h, w) - 0) ** 2).mean() + ((get_u(Y_2, c, h, w) - 0) ** 2).mean() + \
-                 ((get_u(Y_3, c, h, w) - 0) ** 2).mean() + ((get_u(Y_4, c, h, w) - 0) ** 2).mean() + \
-                 ((get_u(Z_1, c, h, w) - 0) ** 2).mean() + ((get_u(Z_2, c, h, w) - 0) ** 2).mean() + \
-                 ((get_u(Z_3, c, h, w) - 0) ** 2).mean() + ((get_u(Z_4, c, h, w) - 0) ** 2).mean()
+    y4 = torch.ones_like(x3)
+    Y_1 = torch.stack((x3.flatten(), y4.flatten(), z3.flatten()), dim=1)
+    
+    x5, y5 = torch.meshgrid(coords, coords, indexing='ij')
+    z5 = torch.zeros_like(x5)
+    Z_0 = torch.stack((x5.flatten(), y5.flatten(), z5.flatten()), dim=1)
+    
+    z6 = torch.ones_like(x5)
+    Z_1 = torch.stack((x5.flatten(), y5.flatten(), z6.flatten()), dim=1)
+    
+    c, h, w = net.center, net.hight, net.width
+    bound_loss = ((get_u(X_0, c, h, w) ** 2).mean()  # x=0
+    bound_loss += ((get_u(X_1, c, h, w) ** 2).mean() # x=1
+    bound_loss += ((get_u(Y_0, c, h, w) ** 2).mean() # y=0
+    bound_loss += ((get_u(Y_1, c, h, w) ** 2).mean() # y=1
+    bound_loss += ((get_u(Z_0, c, h, w) ** 2).mean() # z=0
+    bound_loss += ((get_u(Z_1, c, h, w) ** 2).mean() # z=1
+    
     return bound_loss
 
 
